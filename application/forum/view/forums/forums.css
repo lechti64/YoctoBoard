@@ -1,0 +1,13 @@
+.forum__status {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  background-color: #ffa463;
+  color: #ffffff;
+  font-size: 18px;
+}
+.forum__member-picture {
+  height: 35px;
+  width: 35px;
+  line-height: 35px;
+}

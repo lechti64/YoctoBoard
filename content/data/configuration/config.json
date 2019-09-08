@@ -1,0 +1,10 @@
+{
+  "columns": {
+    "description": "string",
+    "password": "string",
+    "title": "string",
+    "username": "string"
+  },
+  "foreignKeys": {},
+  "increment": 2
+}
