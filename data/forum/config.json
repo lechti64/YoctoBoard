@@ -1,0 +1,21 @@
+{
+    "columns": {
+        "categoryId": "integer",
+        "description": "string",
+        "lastMessageId": "integer",
+        "messagesNb": "integer",
+        "position": "integer",
+        "title": "string"
+    },
+    "foreignKeys": {
+        "category": {
+            "column": "categoryId",
+            "table": "category"
+        },
+        "lastMessage": {
+            "column": "lastMessageId",
+            "table": "message"
+        }
+    },
+    "increment": 3
+}

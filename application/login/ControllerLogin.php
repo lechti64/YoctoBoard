@@ -30,18 +30,13 @@ class ControllerLogin extends Controller
             AND password_verify($password, $member->password)
         ) {
             // Création du cookie
-            setcookie('YOCTO_MEMBER_ID', $member->id, time() + 3600 * 24);
+            setcookie('yocto_member_id', $member->id, time() + 3600 * 24);
             // Redirection sur la page d'accueil
-            header('Location: ./');
-            exit;
+            $this->redirect('./');
         }
-        // Échec de connexion
-        else {
-            // Alerte
-            $this->setAlert('Identifiant ou mot de passe incorrect.', 'danger');
-            // Affichage
-            $this->index();
-        }
+
+        // Affichage
+        $this->index();
     }
 
 }

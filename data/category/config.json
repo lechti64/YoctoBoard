@@ -1,0 +1,9 @@
+{
+    "columns": {
+        "description": "string",
+        "position": "integer",
+        "title": "string"
+    },
+    "foreignKeys": {},
+    "increment": 2
+}

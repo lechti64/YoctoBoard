@@ -1,0 +1,25 @@
+{
+    "columns": {
+        "forumId": "integer",
+        "lastMessageId": "integer",
+        "memberId": "integer",
+        "messagesNb": "integer",
+        "title": "string",
+        "viewsNb": "integer"
+    },
+    "foreignKeys": {
+        "forum": {
+            "column": "forumId",
+            "table": "forum"
+        },
+        "lastMessage": {
+            "column": "lastMessageId",
+            "table": "message"
+        },
+        "member": {
+            "column": "memberId",
+            "table": "member"
+        }
+    },
+    "increment": 5
+}

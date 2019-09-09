@@ -5,67 +5,91 @@ namespace Yocto;
 class ControllerForum extends Controller
 {
 
-    /** @var stdClass[] Catégories */
+    /** @var Database[] Catégories */
     public $categories = [];
 
-    /** @var stdClass Forum */
+    /** @var Database Forum */
     public $forum;
 
-    /** @var stdClass[] Sujets */
+    /** @var string[] Liste des forums pour le select */
+    public $forumOptions;
+
+    /** @var Database[] Sujets */
     public $topics = [];
 
-    public function add(int $forumId)
+    public function add($forumId)
     {
         // Forum
         $this->forum = Database::instance('forum')
-            ->where('id', '=', $forumId)
+            ->where('id', '=', (int)$forumId)
             ->find();
 
         // Librairies
-        $this->setVendor('https://cdn.ckeditor.com/ckeditor5/12.4.0/classic/ckeditor.js');
-        
+        $this->setVendor(
+            'https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.15/tinymce.min.js',
+            'sha256-sUcUXrcbjQo1TED1nZIj4IndwPGhvnuuhhlRi94D7A8='
+        );
+
         // Affichage
         $this->setView('add');
         $this->setLayout('main');
     }
 
-    public function addPost(int $forumId)
+    public function addPost($forumId)
     {
         // Données du formulaire
         $title = $this->get('title', true);
         $content = $this->get('content', true);
 
         // Création du sujet
-        $row = Database::instance('topic');
-        $row->content = $content;
-        $row->createdAt = time();
-        $row->forumId = $forumId;
-        $row->lastMessageAt = time();
-        $row->memberId = 1; // TODO
-        $row->title = $title;
-        $row->updatedAt = time();
-        $row->save();
+        $topic = Database::instance('topic');
+        $topic->forumId = (int)$forumId;
+        $topic->memberId = $this->getSession()->getMember()->id;
+        $topic->messagesNb = 1;
+        $topic->title = $title;
+        $topic->save();
 
-        // Alerte
-        $this->setAlert('Sujet créé avec succès.');
+        // Création du message
+        $message = Database::instance('message');
+        $message->content = $content;
+        $message->memberId = $this->getSession()->getMember()->id;
+        $message->topicId = $topic->id;
+        $message->save();
+
+        // Ajout de l'id du message au sujet
+        $topic->lastMessageId = $message->id;
+        $topic->save();
+
+        // Ajout de l'id du message au forum
+        $forum = Database::instance('forum')
+            ->where('id', '=', (int)$forumId)
+            ->find();
+        $forum->lastMessageId = $message->id;
+        $forum->messagesNb++;
+        $forum->save();
+
+        // Redirection si aucune erreur
+        if (!$this->getNotices()) {
+            $this->redirect('./?application=topic&controller=' . $message->id);
+        }
 
         // Affichage
         $this->add($forumId);
     }
 
-    public function forum(int $forumId)
+    public function forum($forumId)
     {
         // Forum
         $this->forum = Database::instance('forum')
-            ->where('id', '=', $forumId)
+            ->where('id', '=', (int)$forumId)
             ->find();
 
         // Sujets
         $this->topics = Database::instance('topic')
-            ->where('forumId', '=', $forumId)
+            ->where('forumId', '=', (int)$forumId)
             ->orderBy('createdAt', 'DESC')
             ->findAll();
-            
+
         // Affichage
         $this->setView('forum');
         $this->setLayout('main');
@@ -79,13 +103,22 @@ class ControllerForum extends Controller
             ->findAll();
 
         // Ajout des forums aux catégories
-        foreach($this->categories as &$category) {
+        foreach ($this->categories as &$category) {
             $category->forums = Database::instance('forum')
                 ->where('categoryId', '=', $category->id)
                 ->orderBy('position', 'ASC')
                 ->findAll();
         }
         unset($category);
+
+        // Liste des forums pour le select
+        // TODO: tier par catégorie
+        $forums = Database::instance('forum')
+            ->orderBy('title', 'ASC')
+            ->findAll();
+        foreach ($forums as $forum) {
+            $this->forumOptions[$forum->id] = $forum->title;
+        }
 
         // Affichage
         $this->setView('forums');

@@ -11,21 +11,23 @@
     </a>
 </div>
 
-<h2><?php echo $this->forum->title; ?></h2>
+<h1><?php echo $this->forum->title; ?></h1>
 
 <div class="card mt-3">
     <ul class="list-group list-group-flush">
-        <?php foreach($this->topics as $topic): ?>
+        <?php foreach ($this->topics as $topic): ?>
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-7 align-self-center">
                         <div class="d-flex">
                             <div class="align-self-center pr-3">
-                                <i class="fas fa-circle topic__status"></i>
+                                <i class="fas fa-circle text-warning"></i>
                             </div>
                             <div class="flex-grow-1 align-self-center">
                                 <h5 class="card-title mb-n1">
-                                    <a href="?application=topic&controller=<?php echo $topic->id; ?>/"><?php echo $topic->title; ?></a>
+                                    <a href="?application=topic&controller=<?php echo $topic->id; ?>/">
+                                        <?php echo $topic->title; ?>
+                                    </a>
                                 </h5>
                                 <p class="card-text">
                                     <small class="text-muted">
@@ -40,16 +42,24 @@
                     </div>
                     <div class="col-2 align-self-center text-right">
                         <p class="card-text mb-n1">
-                            <small><?php echo $topic->messagesNb; ?> <?php echo $topic->messagesNb > 1 ? 'messages' : 'message'; ?></small>
+                            <small>
+                                <?php echo $topic->messagesNb; ?>
+                                <?php echo $topic->messagesNb > 1 ? 'messages' : 'message'; ?>
+                            </small>
                         </p>
                         <p class="card-text">
-                            <small class="text-muted"><?php echo $topic->viewsNb; ?> <?php echo $topic->viewsNb > 1 ? 'vues' : 'vue'; ?></small>
+                            <small class="text-muted">
+                                <?php echo $topic->viewsNb; ?>
+                                <?php echo $topic->viewsNb > 1 ? 'vues' : 'vue'; ?>
+                            </small>
                         </p>
                     </div>
                     <div class="col-3 align-self-center">
-                        <?php if($topic->lastMessageId): ?>
+                        <?php if ($topic->lastMessageId): ?>
                             <div class="d-flex">
-                                <div class="topic__member-picture align-self-center rounded-circle bg-light text-center font-weight-bold text-uppercase"><?php echo $topic->lastMessage->member->name[0]; ?></div>
+                                <div class="topic__member-picture align-self-center rounded-circle bg-light text-center font-weight-bold text-uppercase">
+                                    <?php echo $topic->lastMessage->member->name[0]; ?>
+                                </div>
                                 <div class="pl-3">
                                     <p class="card-text mb-n1">
                                         <small>
@@ -60,7 +70,9 @@
                                         </small>
                                     </p>
                                     <p class="card-text">
-                                        <small class="text-muted"><?php echo strftime('%e %B %G', (new DateTime($topic->lastMessage->createdAt))->getTimestamp()); ?></small>
+                                        <small class="text-muted">
+                                            <?php echo strftime('%e %B %G', (new DateTime($topic->lastMessage->createdAt))->getTimestamp()); ?>
+                                        </small>
                                     </p>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@ namespace Yocto;
 class Database implements \IteratorAggregate, \Countable
 {
 
-    const PATH = ROOT . '/content/data';
+    const PATH = ROOT . '/data';
 
     /** @var array Conditions */
     private $conditions = [
@@ -16,9 +16,6 @@ class Database implements \IteratorAggregate, \Countable
 
     /** @var array Configuration */
     private $configuration = [];
-
-    /** @var string Objets instanciés précédemment afin d'éviter les boucles infinies avec les clefs étrangères, infos stockées : nom de table, nom et valeur de colonne */
-    private $previousInstances = [];
 
     /** @var \stdClass Ligne lors d'un find, insert ou update */
     private $row;
@@ -182,11 +179,10 @@ class Database implements \IteratorAggregate, \Countable
     /**
      * Crée l'instance d'une table
      * @param string $table Table
-     * @param string $previousInstances Objets instanciés précédemment
      * @return Database
      * @throws \Exception
      */
-    public static function instance($table, $previousInstances = [])
+    public static function instance($table)
     {
         if (self::exists($table) === false) {
             throw new \Exception('"' . $table . '" table not found');
@@ -194,8 +190,6 @@ class Database implements \IteratorAggregate, \Countable
         $self = new self();
         // Table instanciée
         $self->table = $table;
-        // Objets instanciés précédemment
-        $self->previousInstances = $previousInstances;
         // Configuration de la table
         $self->configuration = json_decode(file_get_contents(self::PATH . '/' . $table . '/config.json'), true);
         // Ligne vide
@@ -207,20 +201,13 @@ class Database implements \IteratorAggregate, \Countable
         // Lignes de la table
         foreach (new \DirectoryIterator(self::PATH . '/' . $table) as $file) {
             if ($file->getExtension() === 'json' AND $file->getFilename() !== 'config.json') {
-                $rows = json_decode(file_get_contents(self::PATH . '/' . $table . '/' . $file->getFilename()));
-                $rows->id = (int)$file->getBasename('.json');
-                // Clefs étrangères
-                foreach ($self->configuration['foreignKeys'] as $foreignKey => $foreignInfo) {
-                    $instance = $foreignInfo['table'] . $foreignInfo['column'] . $rows->{$foreignInfo['column']};
-                    if(!in_array($instance, $self->previousInstances)) {
-                        $self->previousInstances[] = $instance;
-                        $rows->{$foreignKey} = self::instance($foreignInfo['table'], $self->previousInstances)
-                            ->where('id', '=', $rows->{$foreignInfo['column']})
-                            ->find();
-                    }
-                   
-                }
-                $self->rows[] = $rows;
+                $row = json_decode(file_get_contents(self::PATH . '/' . $table . '/' . $file->getFilename()));
+                $row->id = (int)$file->getBasename('.json');
+                $self->rows[] = (object)array_merge((array)$row, (array)self::instanceForeign(
+                    $row,
+                    $self->configuration['foreignKeys'],
+                    [$table . $row->id]
+                ));;
             }
         }
         return $self;
@@ -280,10 +267,22 @@ class Database implements \IteratorAggregate, \Countable
         if (in_array(null, (array)$this->row, true)) {
             return $this;
         }
-        // Ajoute un id lors d'une insertion
-        if ($this->row->id === 0) {
-            $this->row->id = $this->configuration['increment']++;
+        // Supprime les clefs étrangères pour ne pas les enregistrer
+        foreach ($this->configuration['foreignKeys'] as $foreignKey => $foreignInfo) {
+            unset($this->row->{$foreignKey});
         }
+        // Date de création / mise à jour
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
+        $date = $date->format('Y-m-d\TH:i:sO');
+        // Insertion
+        if ($this->row->id === 0) {
+            // Ajoute un id lors d'une insertion
+            $this->row->id = $this->configuration['increment']++;
+            // Ajoute la date de création
+            $this->row->createdAt = $date;
+        }
+        // Ajout de la date de mise à jour
+        $this->row->updatedAt = $date;
         // Incrémente le fichier de configuration
         if (file_put_contents(self::PATH . '/' . $this->table . '/config.json', json_encode($this->configuration, JSON_PRETTY_PRINT)) === false) {
             throw new \Exception('Failed to edit "config.json" for "' . $this->table . '" table');
@@ -476,14 +475,44 @@ class Database implements \IteratorAggregate, \Countable
         // Filtre la valeur
         switch ($type) {
             case 'boolean':
-                return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                return (bool)filter_var($value, FILTER_VALIDATE_BOOLEAN);
             case 'float':
-                return filter_var($value, FILTER_VALIDATE_FLOAT);
+                return (float)filter_var($value, FILTER_VALIDATE_FLOAT);
             case 'integer':
-                return filter_var($value, FILTER_VALIDATE_INT);
+                return (int)filter_var($value, FILTER_VALIDATE_INT);
             default:
                 return (string)$value;
         }
+    }
+
+    /**
+     * Crée l'instance des lignes rattachées aux clefs étrangères
+     * @param \stdClass $row Lignes
+     * @param array $foreignKeys Clefs étrangères
+     * @param array $history Historique des recherches pour éviter les boucles infinies
+     * @return \stdClass
+     */
+    private static function instanceForeign($row, $foreignKeys, $history)
+    {
+        foreach ($foreignKeys as $foreignKey => $foreignInfo) {
+            $foreignRowId = $row->{$foreignInfo['column']};
+            $search = $foreignInfo['table'] . $foreignRowId;
+            if ($foreignRowId !== 0 && !in_array($search, $history)) {
+                // Configuration de la table rattachée à la clef étrangère
+                $configuration = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/config.json'), true);
+                // Lignes rattachées à la clef étrangère
+                $foreignRow = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/' . $foreignRowId . '.json'));
+                $foreignRow->id = $foreignRowId;
+                $history[] = $search;
+                // Récursivité
+                $row->{$foreignKey} = (object)array_merge((array)$foreignRow, (array)self::instanceForeign(
+                    $foreignRow,
+                    $configuration['foreignKeys'],
+                    $history
+                ));
+            }
+        }
+        return $row;
     }
 
 }

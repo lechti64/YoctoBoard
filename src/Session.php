@@ -23,16 +23,20 @@ class Session
     }
 
     /**
-     * Test si l'utilisateur est connecté
-     * @return bool
+     * Retourne le membre de la session
+     * @return Database
+     * @throws \Exception
      */
-    public function isLoggedIn()
+    public function getMember()
     {
-        return (!empty($this->controller->get('COOKIE:YOCTO_LOGGEDIN')));
+        $memberId = $this->controller->get('COOKIE:yocto_member_id');
+        return Database::instance('member')
+            ->where('id', '=', (int)$memberId)
+            ->find();
     }
 
     /**
-     * Test si un objet est visible pour l'utilisateur
+     * Test si un objet est visible pour le membre
      * @param \stdClass $object Objet
      * @return bool
      * @throws \Exception

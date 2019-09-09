@@ -1,12 +1,14 @@
 <nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="?application=forum"><i class="fas fa-home"></i> Accueil</a></li>
-    <li class="breadcrumb-item"><a href="?application=forum&controller=<?php echo $this->forum->id; ?>"><?php echo $this->forum->title; ?></a></li>
-    <li class="breadcrumb-item active" aria-current="page">Créer un sujet</li>
-  </ol>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="?application=forum"><i class="fas fa-home"></i> Accueil</a></li>
+        <li class="breadcrumb-item"><a
+                    href="?application=forum&controller=<?php echo $this->forum->id; ?>"><?php echo $this->forum->title; ?></a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Créer un sujet</li>
+    </ol>
 </nav>
 
-<h2>Créer un sujet</h2>
+<h1>Créer un sujet</h1>
 
 <form method="post">
     <div class="card">
@@ -24,14 +26,16 @@
                 <div class="col-4">
                     <div class="card bg-light">
                         <div class="card-body">
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card-footer text-center">
-            <button type="button" class="btn btn-outline-secondary">Annuler</button>
+            <a href="?application=forum&controller=<?php echo $this->forum->id; ?>">
+                <button type="button" class="btn btn-outline-secondary">Annuler</button>
+            </a>
             <button type="submit" class="btn btn-primary">Créer le sujet</button>
         </div>
     </div>

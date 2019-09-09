@@ -1,5 +1,7 @@
 <?php
 
+use ScssPhp\ScssPhp\Compiler;
+
 define('ROOT', __DIR__);
 
 // Ouvre une session
@@ -11,9 +13,9 @@ require ROOT . '/src/Autoloader.php';
 Yocto\Autoloader::register();
 
 // Charge le gestionnaire d'erreurs
-$whoops = new Whoops\Run;
-$whoops->pushHandler(new Whoops\Handler\PrettyPageHandler);
-$whoops->register();
+//$whoops = new Whoops\Run;
+//$whoops->pushHandler(new Whoops\Handler\PrettyPageHandler);
+//$whoops->register();
 function dump($expression)
 {
     ob_start();
@@ -42,6 +44,14 @@ function dump($expression)
 $_configuration = Yocto\Database::instance('configuration')
     ->where('id', '=', 1)
     ->find();
+
+// Génère la feuille de styles
+if (!is_file(ROOT . '/public/main.css')) {
+    $scss = new Compiler();
+    $scss->setImportPaths(ROOT . '/layout/main');
+    $css = $scss->compile('@import "main.scss";');
+    file_put_contents(ROOT . '/public/main.css', $css);
+}
 
 // Récupère l'application
 $_application = (empty($_GET['application'])

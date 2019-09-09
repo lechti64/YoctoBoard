@@ -1,5 +1,7 @@
 {
-    "require": {
-        "filp/whoops": "2.*"
-    }
+  "require": {
+    "twitter/bootstrap": "^4.3",
+    "scssphp/scssphp": "^1.0",
+    "filp/whoops": "^2.5"
+  }
 }

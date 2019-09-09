@@ -1,0 +1,76 @@
+// Colors
+$blue: #07689f;
+$orange: #ff7e67;
+$yellow: #f6d365;
+$green: #4baea0;
+$white: #ffffff;
+$gray-100: #fafafa;
+$gray-200: #f2f2f2;
+$gray-300: #e9e9e9;
+$gray-400: #e1e1e1;
+$gray-500: #c7c7c7;
+$gray-600: #6a6a6a;
+$gray-700: #484848;
+$gray-800: #373737;
+$gray-900: #262626;
+$warning: $orange;
+$light: $gray-200;
+
+// Body
+$body-bg: $gray-100;
+
+// Navs
+$navbar-dark-color: rgba($white, .8);
+$navbar-dark-hover-color: rgba($white, .9);
+$navbar-dark-toggler-border-color: transparent;
+$navbar-toggler-font-size: 1.6rem;
+
+// Border
+$border-color: $gray-200;
+
+// Breadcrumbs
+$breadcrumb-bg: $gray-200;
+
+// Card
+$card-cap-bg: $gray-200;
+$card-border-color: $gray-200;
+
+// Dropdowns
+$dropdown-min-width: 12rem;
+$dropdown-padding-y: 0;
+$dropdown-border-radius: 0;
+$dropdown-font-size: 0.9rem;
+$dropdown-border-color: $gray-200;
+$dropdown-divider-margin-y: 0;
+$dropdown-item-padding-y: 0.6rem;
+
+// Typography
+$font-family-base: 'roboto', sans-serif;
+$font-weight-light: 100;
+$font-weight-normal: 300;
+$h1-font-size: 2rem;
+$h2-font-size: 1.75rem;
+$h3-font-size: 1.3rem;
+$h4-font-size: 1.25rem;
+$h5-font-size: 1.15rem;
+
+// Links
+$link-hover-decoration: none;
+
+// Import Bootstrap
+@import '../../vendor/twitter/bootstrap/scss/bootstrap';
+
+// Taille de la police
+body {
+  font-size: 16px;
+}
+
+// Container
+.container-fluid {
+  max-width: 1300px;
+}
+
+// Editeur
+.ck-editor__editable_inline {
+  min-height: 300px;
+}

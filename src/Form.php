@@ -169,7 +169,7 @@ class Form
             'name' => $nameId,
             'selected' => '',
         ], $attributes);
-        $attributes['class'] .= ' custom-select';
+        $attributes['class'] .= ' form-control';
         // Restore la valeur lors d'une erreur de soumission
         if ($value = $this->controller->get('POST:' . $nameId)) {
             $attributes['value'] = $value;

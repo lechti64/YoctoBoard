@@ -1,0 +1,18 @@
+{
+    "columns": {
+        "content": "string",
+        "memberId": "integer",
+        "topicId": "integer"
+    },
+    "foreignKeys": {
+        "member": {
+            "column": "memberId",
+            "table": "member"
+        },
+        "topic": {
+            "column": "topicId",
+            "table": "topic"
+        }
+    },
+    "increment": 5
+}

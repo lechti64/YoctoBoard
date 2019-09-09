@@ -8,12 +8,6 @@ class Controller
     /** @var Database Configuration */
     public $_configuration;
 
-    /** @var array Alerte */
-    private $alert = [
-        'text' => '',
-        'type' => '',
-    ];
-
     /** @var Form Formulaire */
     private $form;
 
@@ -88,24 +82,6 @@ class Controller
     }
 
     /**
-     * Accès au texte de l'alerte
-     * @return string
-     */
-    public function getAlertText()
-    {
-        return $this->alert['text'];
-    }
-
-    /**
-     * Accès au type de l'alerte
-     * @return string
-     */
-    public function getAlertType()
-    {
-        return $this->alert['type'];
-    }
-
-    /**
      * Accès au formulaire
      */
     public function getForm()
@@ -170,25 +146,19 @@ class Controller
     public function loadViewJs()
     {
         $directoryName = $this->getDirectoryName();
-        $jsPath = ROOT . '/application/' . $directoryName . '/view/' . $this->view . '/' . $this->view . '.js.php';
-        if (is_file($jsPath)) {
-            echo '<script>';
-            require $jsPath;
-            echo '</script>';
+        $jsPath = 'application/' . $directoryName . '/view/' . $this->view . '/' . $this->view . '.js';
+        if (is_file(ROOT . '/' . $jsPath)) {
+            echo '<script src="' . $jsPath . '"></script>';
         }
     }
 
     /**
-     * Configure l'alerte de soumission
-     * @param string $text Texte
-     * @param string $type Type (primary, secondary, success, danger, warning, info, light, dark)
+     * Redirection
      */
-    public function setAlert($text, $type = 'success')
+    public function redirect($url)
     {
-        $this->alert = [
-            'text' => $text,
-            'type' => $type,
-        ];
+        header('Location: ' . $url);
+        exit;
     }
 
     /**
