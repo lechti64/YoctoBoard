@@ -14,8 +14,8 @@
         </li>
         <?php for ($i = $this->pageFirstLink; $i <= $this->pageLastLink; $i++): ?>
             <li <?php echo $this->pageCurrent === $i
-                ? 'class="page-item active" aria-current="page"'
-                : 'class="page-item"';
+                ? 'class="page-item active d-none d-sm-block" aria-current="page"'
+                : 'class="page-item d-none d-sm-block"';
             ?>>
                 <a class="page-link"
                    href="?application=forum&controller=<?php echo $this->forum->id; ?>&page=<?php echo $i; ?>">

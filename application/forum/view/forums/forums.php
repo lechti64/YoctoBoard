@@ -24,7 +24,7 @@
                         <div class="col-8 col-lg-9 align-self-lg-center">
                             <div class="d-flex">
                                 <div class="align-self-start align-self-lg-center pr-3">
-                                    <div class="forum__status bg-warning rounded-circle text-center d-inline-block">
+                                    <div class="forum__status text-white bg-warning rounded-circle text-center d-inline-block">
                                         <i class="fas fa-comments"></i>
                                     </div>
                                 </div>

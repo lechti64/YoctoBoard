@@ -142,10 +142,11 @@ class ControllerForum extends Controller
             ->limit($offset, $topicsPerPage)
             ->findAll();
 
-        // Conversion de la date du dernier message en format lisible par l'homme
+        // Conversion des dates en format lisible par l'homme
         $timeAgoLang = new TimeAgo\Translations\Fr();
         $timeAgo = new TimeAgo($timeAgoLang);
         foreach ($this->topics as &$topic) {
+            $topic->createdAt = $timeAgo->inWords(new \DateTime($topic->createdAt));
             $topic->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($topic->lastMessage->createdAt));
         }
         unset($topic);
