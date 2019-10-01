@@ -3,6 +3,7 @@
     "lastMessageId": 12,
     "memberId": 3,
     "messagesNb": 1,
+    "pin": false,
     "title": "Test h",
     "viewsNb": 0,
     "createdAt": "2019-10-01T11:04:51+0000",

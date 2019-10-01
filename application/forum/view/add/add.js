@@ -1,3 +1,4 @@
+// Initialisation de TinyMCE
 tinymce.init({
     selector: '#content',
     min_height: 300,

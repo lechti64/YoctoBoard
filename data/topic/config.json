@@ -4,6 +4,7 @@
         "lastMessageId": "integer",
         "memberId": "integer",
         "messagesNb": "integer",
+        "pin": "boolean",
         "title": "string",
         "viewsNb": "integer"
     },
@@ -21,5 +22,5 @@
             "table": "member"
         }
     },
-    "increment": 69
+    "increment": 78
 }

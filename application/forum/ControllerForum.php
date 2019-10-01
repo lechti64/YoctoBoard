@@ -56,14 +56,16 @@ class ControllerForum extends Controller
     public function addPost($forumId)
     {
         // Données du formulaire
-        $title = $this->get('title', true);
         $content = $this->get('content', true);
+        $pin = $this->get('pin');
+        $title = $this->get('title', true);
 
         // Création du sujet
         $topic = Database::instance('topic');
-        $topic->forumId = (int)$forumId;
+        $topic->forumId = $forumId;
         $topic->memberId = $this->getSession()->getMember()->id;
         $topic->messagesNb = 1;
+        $topic->pin = $pin;
         $topic->title = $title;
         $topic->save();
 
@@ -133,6 +135,7 @@ class ControllerForum extends Controller
         // Sujets à afficher
         $this->topics = Database::instance('topic')
             ->where('forumId', '=', (int)$forumId)
+            ->orderBy('pin', 'DESC')
             ->orderBy('createdAt', 'DESC')
             ->limit($offset, $topicsPerPage)
             ->findAll();

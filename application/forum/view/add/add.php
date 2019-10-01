@@ -14,7 +14,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-8">
+                <div class="col-9">
                     <div class="form-group">
                         <?php echo $this->getForm()->label('title', 'Titre'); ?>
                         <?php echo $this->getForm()->input('title'); ?>
@@ -23,10 +23,11 @@
                         <?php echo $this->getForm()->textarea('content', ''); ?>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <div class="card bg-light">
                         <div class="card-body">
-
+                            <h3>Options</h3>
+                            <?php echo $this->getForm()->checkbox('pin', 'Épingler le sujet'); ?>
                         </div>
                     </div>
                 </div>

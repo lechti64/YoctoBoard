@@ -4,6 +4,7 @@
     "lastMessageId": 1,
     "memberId": 1,
     "messagesNb": 1,
+    "pin": false,
     "title": "Sujet de test",
     "updatedAt": "2019-09-08T23:07:11+0000",
     "viewsNb": 10

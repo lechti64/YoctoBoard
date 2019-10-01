@@ -237,7 +237,7 @@ class Database implements \IteratorAggregate, \Countable
      */
     public function orderBy($column, $direction = 'ASC')
     {
-        $this->conditions['orderBy'] = [
+        $this->conditions['orderBy'][] = [
             'column' => $column,
             'direction' => $direction,
         ];
@@ -386,20 +386,28 @@ class Database implements \IteratorAggregate, \Countable
     private function applyOrderBy()
     {
         uasort($this->rows, function ($a, $b) {
-            if ($this->conditions['orderBy']['direction'] === 'ASC') {
-                return strnatcasecmp(
-                    $a->{$this->conditions['orderBy']['column']},
-                    $b->{$this->conditions['orderBy']['column']}
-                );
-            } else if ($this->conditions['orderBy']['direction'] === 'DESC') {
-                return strnatcasecmp(
-                    $b->{$this->conditions['orderBy']['column']},
-                    $a->{$this->conditions['orderBy']['column']}
-                );
-            } else {
-                throw new \Exception('Unknown "' . $this->conditions['orderBy'] . '" direction');
+            $sort = 0;
+            foreach ($this->conditions['orderBy'] as $condition) {
+                if ($condition['direction'] === 'ASC') {
+                    $sort = strnatcasecmp(
+                        $a->{$condition['column']},
+                        $b->{$condition['column']}
+                    );
+                } else if ($condition['direction'] === 'DESC') {
+                    $sort = strnatcasecmp(
+                        $b->{$condition['column']},
+                        $a->{$condition['column']}
+                    );
+                } else {
+                    throw new \Exception('Unknown "' . $this->conditions['orderBy'] . '" direction');
+                }
+                if ($sort) {
+                    return $sort;
+                }
             }
+            return $sort;
         });
+
     }
 
     /**

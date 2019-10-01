@@ -28,7 +28,11 @@
                                 <i class="fas fa-circle text-warning"></i>
                             </div>
                             <div class="flex-grow-1 align-self-center">
-                                <h5 class="card-title mb-n1">
+                                <?php if ($topic->pin): ?>
+                                    <small class="fas fa-thumbtack mr-1" data-toggle="tooltip" data-placement="top"
+                                           title="Sujet épinglé"></small>
+                                <?php endif; ?>
+                                <h5 class="card-title mb-n1 d-inline-block">
                                     <a href="?application=topic&controller=<?php echo $topic->id; ?>/">
                                         <?php echo $topic->title; ?>
                                     </a>
