@@ -16,23 +16,23 @@ class ControllerForum extends Controller
     /** @var string[] Liste des forums pour le select */
     public $forumOptions;
 
-    /** @var int Nombre de pages */
-    public $pagesNb = 1;
-
     /** @var int Page courante */
     public $pageCurrent = 1;
-
-    /** @var int Page precédente */
-    public $pagePrevious = 1;
-
-    /** @var int Page suivante */
-    public $pageNext = 1;
 
     /** @var int Première page affichée dans les liens */
     public $pageFirstLink = 1;
 
     /** @var int Dernière page affichée dans les liens */
     public $pageLastLink = 1;
+
+    /** @var int Page suivante */
+    public $pageNext = 1;
+
+    /** @var int Page precédente */
+    public $pagePrevious = 1;
+
+    /** @var int Nombre de pages */
+    public $pagesNb = 1;
 
     /** @var Database[] Sujets */
     public $topics = [];

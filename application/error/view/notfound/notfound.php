@@ -5,9 +5,7 @@
                 <h1>Page introuvable</h1>
                 <p>La page que vous avez demandée n'existe pas.</p>
                 <div class="text-center">
-                    <button type="button" class="btn btn-secondary" onclick="history.back();">
-                        Retour
-                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="history.back();">Retour</button>
                 </div>
             </div>
         </div>
