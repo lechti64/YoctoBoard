@@ -14,6 +14,24 @@ class ControllerForum extends Controller
     /** @var string[] Liste des forums pour le select */
     public $forumOptions;
 
+    /** @var int Nombre de pages */
+    public $pagesNb = 1;
+
+    /** @var int Page courante */
+    public $pageCurrent = 1;
+
+    /** @var int Page precédente */
+    public $pagePrevious = 1;
+
+    /** @var int Page suivante */
+    public $pageNext = 1;
+
+    /** @var int Première page affichée dans les liens */
+    public $pageFirstLink = 1;
+
+    /** @var int Dernière page affichée dans les liens */
+    public $pageLastLink = 1;
+
     /** @var Database[] Sujets */
     public $topics = [];
 
@@ -87,10 +105,36 @@ class ControllerForum extends Controller
         // Accès
         $this->getSession()->checkAccess($this->forum->category->rightReadGroupIds);
 
-        // Sujets
+        // Nombre de sujets par page
+        $topicsPerPage = 10;
+
+        // Nombre de pages suivantes / précédentes
+        $pageLinksNb = 5;
+
+        // Nombre de sujets
+        $topicsNb = Database::instance('topic')
+            ->where('forumId', '=', (int)$forumId)
+            ->findAll()
+            ->count();
+
+        // Nombre de pages
+        $this->pagesNb = (int)ceil($topicsNb / $topicsPerPage);
+
+        // Page courante, précédente et suivante
+        $this->pageCurrent = min($this->pagesNb, max(1, (int)$this->get('page')));
+        $this->pagePrevious = $this->pageCurrent - 1;
+        $this->pageNext = $this->pageCurrent + 1;
+        $this->pageFirstLink = max(1, $this->pageCurrent - $pageLinksNb);
+        $this->pageLastLink = min($this->pagesNb, $this->pageCurrent + $pageLinksNb);
+
+        // Offset de la requête
+        $offset = $topicsPerPage * ($this->pageCurrent - 1);
+
+        // Sujets à afficher
         $this->topics = Database::instance('topic')
             ->where('forumId', '=', (int)$forumId)
             ->orderBy('createdAt', 'DESC')
+            ->limit($offset, $topicsPerPage)
             ->findAll();
 
         // Affichage

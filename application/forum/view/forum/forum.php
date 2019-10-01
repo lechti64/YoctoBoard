@@ -15,7 +15,9 @@
 
 <h1><?php echo $this->forum->title; ?></h1>
 
-<div class="card mt-3">
+<?php require __DIR__ . '/inc.pagination.php'; ?>
+
+<div class="card my-3">
     <ul class="list-group list-group-flush">
         <?php foreach ($this->topics as $topic): ?>
             <li class="list-group-item">
@@ -87,3 +89,5 @@
         <?php endforeach; ?>
     </ul>
 </div>
+
+<?php require __DIR__ . '/inc.pagination.php'; ?>

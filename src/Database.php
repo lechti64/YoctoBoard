@@ -218,6 +218,7 @@ class Database implements \IteratorAggregate, \Countable
      * @param int $offset Index de début
      * @param int $length Nombre de lignes
      * @return $this
+     * @throws \Exception
      */
     public function limit($offset, $length)
     {

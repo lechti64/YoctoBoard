@@ -15,7 +15,7 @@
 <h1>Forums</h1>
 
 <?php foreach ($this->categories as $category): ?>
-    <div class="card mt-3">
+    <div class="card my-3">
         <div class="card-header"><?php echo $category->title; ?></div>
         <ul class="list-group list-group-flush">
             <?php foreach ($category->forums as $forum): ?>
