@@ -24,7 +24,6 @@ class Core
 
     /**
      * Importe le routeur de l'application
-     * @param $configuration
      * @throws \Exception
      */
     public function importRouter()
@@ -58,7 +57,7 @@ class Core
             $controller->loadLayout();
         }
     }
-    
+
     /**
      * Récupère l'application
      * @return string

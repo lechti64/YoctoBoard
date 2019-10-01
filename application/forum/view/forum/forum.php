@@ -68,8 +68,8 @@
                     <div class="col-4 col-lg-3 align-self-lg-center">
                         <?php if ($topic->lastMessageId): ?>
                             <div class="d-flex flex-column flex-lg-row justify-content-end justify-content-lg-start">
-                                <div class="topic__member-picture align-self-end align-self-lg-center rounded-circle bg-light text-center font-weight-bold text-uppercase">
-                                    <?php echo $topic->lastMessage->member->name[0]; ?>
+                                <div class="align-self-end align-self-lg-center">
+                                    <?php echo Yocto\Helper::getMemberPicture($topic->lastMessage->member); ?>
                                 </div>
                                 <div class="pl-lg-3 text-right text-lg-left">
                                     <p class="card-text mb-n1 d-none d-lg-block">

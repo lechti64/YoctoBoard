@@ -34,7 +34,7 @@ class Session
 
     /**
      * Vérifie l'accès du membre de la session en fonction d'une liste de groupes
-     * @param $groupIds array Liste de groupes
+     * @param array $groupIds Liste de groupes
      * @throws ForbiddenException
      */
     public function checkAccess($groupIds)
@@ -46,7 +46,7 @@ class Session
 
     /**
      * Crée les cookies d'une session pour un membre donnée
-     * @param $member Database Instance du membre
+     * @param Database $member Instance du membre
      */
     public function create($member)
     {

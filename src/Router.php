@@ -27,7 +27,7 @@ class Router
 
     /**
      * Crée une route
-     * @param string $methods Méthode HTTP
+     * @param string $method Méthode HTTP
      * @param string $path Chemin de la route
      * @param callable $callback Fonction de callback
      * @throws \Exception

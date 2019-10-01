@@ -4,6 +4,7 @@
     "scssphp/scssphp": "^1.0",
     "filp/whoops": "^2.5",
     "ext-json": "^1.6",
-    "jimmiw/php-time-ago": "^3.1"
+    "jimmiw/php-time-ago": "^3.1",
+    "yohang88/letter-avatar": "^2.1"
   }
 }

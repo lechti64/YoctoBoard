@@ -12,7 +12,7 @@ Yocto\Autoloader::register();
 
 // Charge le gestionnaire d'erreurs
 $whoops = new Whoops\Run;
-$whoops->pushHandler(new Whoops\Handler\PrettyPageHandler);
+$whoops->prependHandler(new Whoops\Handler\PrettyPageHandler);
 $whoops->register();
 function dump($expression)
 {

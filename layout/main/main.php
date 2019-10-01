@@ -31,15 +31,16 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNavContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
+                <li class="nav-item align-self-center">
                     <a class="nav-link" href="?application=forum">Accueil</span></a>
                 </li>
                 <?php if ($this->getSession()->getMember()->id): ?>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item align-self-center dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarMember" role="button"
                            data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
-                            <?php echo $this->getSession()->getMember()->name; ?>
+                            <?php echo Yocto\Helper::getMemberPicture($this->getSession()->getMember(), 26); ?>
+                            <span class="ml-1 align-middle"><?php echo $this->getSession()->getMember()->name; ?></span>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarMember">
                             <a class="dropdown-item" href="?application=member&controller=1">Mon compte</a>
