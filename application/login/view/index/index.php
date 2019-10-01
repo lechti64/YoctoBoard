@@ -3,8 +3,9 @@
         <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-body">
+                    <h1>Connexion</h1>
                     <div class="form-group">
-                        <?php echo $this->getForm()->label('auth', 'Pseudo ou adresse email (tmp: Rémi)'); ?>
+                        <?php echo $this->getForm()->label('auth', 'Pseudo ou adresse email (tmp: Administrateur, Modérateur, Membre)'); ?>
                         <?php echo $this->getForm()->input('auth'); ?>
                     </div>
                     <div class="form-group">

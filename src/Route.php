@@ -38,7 +38,6 @@ class Route
      * Recherche des correspondances
      * @param string $url Url
      * @return bool
-     * @throws \Exception
      */
     public function match($url)
     {
@@ -46,7 +45,7 @@ class Route
         $url = trim($url, '/');
         $path = preg_replace('#:([\w]+)#', '([^/]+)', $this->path);
         $regex = "#^$path$#i";
-        if(preg_match($regex, $url, $matches)){
+        if (preg_match($regex, $url, $matches)) {
             array_shift($matches);
             // Enregistre les correspondance
             $this->matches = $matches;

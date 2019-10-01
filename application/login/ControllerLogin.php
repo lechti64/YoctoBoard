@@ -29,8 +29,8 @@ class ControllerLogin extends Controller
             $member->id
             AND password_verify($password, $member->password)
         ) {
-            // Création du cookie
-            setcookie('yocto_member_id', $member->id, time() + 3600 * 24);
+            // Création de la session
+            $this->getSession()->create($member);
             // Redirection sur la page d'accueil
             $this->redirect('./');
         }

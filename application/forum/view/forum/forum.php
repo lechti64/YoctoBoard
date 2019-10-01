@@ -5,11 +5,13 @@
     </ol>
 </nav>
 
-<div class="text-right">
-    <a href="?application=forum&controller=<?php echo $this->forum->id; ?>/add">
-        <button type="button" class="btn btn-success">Commencer un sujet</button>
-    </a>
-</div>
+<?php if ($this->getSession()->getMember()->id): ?>
+    <div class="text-right">
+        <a href="?application=forum&controller=<?php echo $this->forum->id; ?>/add">
+            <button type="button" class="btn btn-success">Commencer un sujet</button>
+        </a>
+    </div>
+<?php endif; ?>
 
 <h1><?php echo $this->forum->title; ?></h1>
 

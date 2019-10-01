@@ -34,24 +34,30 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="?application=forum">Accueil</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="?application=login">Connexion</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="?application=register">S'inscrire</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarMember" role="button" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        <?php echo $this->getSession()->getMember()->name; ?>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarMember">
-                        <a class="dropdown-item" href="?application=member&controller=1">Mon compte</a>
-                        <a class="dropdown-item" href="?application=administration">Administration</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="?application=logout">Déconnexion</a>
-                    </div>
-                </li>
+                <?php if ($this->getSession()->getMember()->id): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarMember" role="button"
+                           data-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">
+                            <?php echo $this->getSession()->getMember()->name; ?>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarMember">
+                            <a class="dropdown-item" href="?application=member&controller=1">Mon compte</a>
+                            <?php if ($this->getSession()->getMember()->group->administrator): ?>
+                                <a class="dropdown-item" href="?application=administration">Administration</a>
+                            <?php endif; ?>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="?application=logout">Déconnexion</a>
+                        </div>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?application=login">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?application=register">S'inscrire</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

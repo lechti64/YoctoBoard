@@ -36,18 +36,18 @@ class Controller
      */
     public function __construct(Database $_configuration)
     {
-        // Transmet les données en provenance de ./index.php
-        $this->_configuration = $_configuration;
-        // Crée l'instance de la session
-        $this->session = new Session($this);
-        // Crée l'instance du formulaire
-        $this->form = new Form($this);
         // Ajoute les méthodes HTTP
         $this->methods = [
             'POST' => $_POST,
             'GET' => $_GET,
             'COOKIE' => $_COOKIE,
         ];
+        // Transmet les données en provenance de ./index.php
+        $this->_configuration = $_configuration;
+        // Crée l'instance du formulaire
+        $this->form = new Form($this);
+        // Crée l'instance de la session
+        $this->session = new Session($this);
     }
 
     /**

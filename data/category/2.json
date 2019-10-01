@@ -1,0 +1,15 @@
+{
+    "description": "Description de la catégorie réservée aux membres.",
+    "position": 1,
+    "rightReadGroupIds": [
+        1,
+        2,
+        3
+    ],
+    "rightWriteGroupIds": [
+        1,
+        2,
+        3
+    ],
+    "title": "Catégorie réservée aux membres"
+}

@@ -4,11 +4,13 @@
     </ol>
 </nav>
 
-<div class="text-right">
-    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addTopicModal">
-        Commencer un sujet
-    </button>
-</div>
+<?php if ($this->getSession()->getMember()->id): ?>
+    <div class="text-right">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addTopicModal">
+            Commencer un sujet
+        </button>
+    </div>
+<?php endif; ?>
 
 <h1>Forums</h1>
 

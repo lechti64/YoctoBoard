@@ -182,15 +182,24 @@ class Form
             $notice = '';
         }
         // Valeurs
-        foreach ($options as $key => &$option) {
-            $option = '<option value="' . $key . '"' . ($attributes['selected'] === $key ? ' selected' : '') . '>' . $option . '</option>';
+        $optionsHtml = '';
+        foreach ($options as $key => $option) {
+            if (is_array($option)) {
+                $optionsHtml .= '<optgroup label="' . $key . '">';
+                foreach ($option as $subkey => $suboption) {
+                    $optionsHtml .= '<option value="' . $subkey . '"' . ($attributes['selected'] === $subkey ? ' selected' : '') . '>' . $suboption . '</option>';
+                }
+                $optionsHtml .= '</optgroup>';
+
+            } else {
+                $optionsHtml .= '<option value="' . $key . '"' . ($attributes['selected'] === $key ? ' selected' : '') . '>' . $option . '</option>';
+            }
         }
-        unset($option);
         // Retourne l'élément
         return sprintf(
             '<select %s>%s</select>%s',
             $this->sprintAttributes($attributes),
-            implode('', $options),
+            $optionsHtml,
             $notice
         );
     }

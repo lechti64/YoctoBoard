@@ -1,0 +1,11 @@
+{
+    "description": "Description de la catégorie réservée aux administrateurs.",
+    "position": 3,
+    "rightReadGroupIds": [
+        3
+    ],
+    "rightWriteGroupIds": [
+        3
+    ],
+    "title": "Catégorie réservée aux administrateurs"
+}

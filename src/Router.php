@@ -2,6 +2,8 @@
 
 namespace Yocto;
 
+use Yocto\Exception\NotFoundException;
+
 class Router
 {
 
@@ -44,13 +46,13 @@ class Router
 
     /**
      * Exécute le routeur
-     * @throws \Exception
+     * @throws NotFoundException
      */
     public function run()
     {
         // Méthode introuvable
         if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
-            throw new \Exception('Method "' . $_SERVER['REQUEST_METHOD'] . '" does not exist');
+            throw new NotFoundException('Method "' . $_SERVER['REQUEST_METHOD'] . '" does not exist');
         }
         // Recherche la route dans la propriété $this->routes
         foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $route) {
@@ -59,7 +61,7 @@ class Router
             }
         }
         // Route introuvable
-        throw new \Exception('Route not found');
+        throw new NotFoundException('Route not found');
     }
 
 }

@@ -84,6 +84,9 @@ class ControllerForum extends Controller
             ->where('id', '=', (int)$forumId)
             ->find();
 
+        // Accès
+        $this->getSession()->checkAccess($this->forum->category->rightReadGroupIds);
+
         // Sujets
         $this->topics = Database::instance('topic')
             ->where('forumId', '=', (int)$forumId)
@@ -99,8 +102,12 @@ class ControllerForum extends Controller
     {
         // Catégories
         $this->categories = Database::instance('category')
+            ->where('rightReadGroupIds', 'REVERSE IN', $this->getSession()->getMember()->groupId)
             ->orderBy('position', 'ASC')
             ->findAll();
+        foreach ($this->categories as $category) {
+            $this->forumOptions[$category->title] = [];
+        }
 
         // Ajout des forums aux catégories
         foreach ($this->categories as &$category) {
@@ -108,17 +115,11 @@ class ControllerForum extends Controller
                 ->where('categoryId', '=', $category->id)
                 ->orderBy('position', 'ASC')
                 ->findAll();
+            foreach ($category->forums as $forum) {
+                $this->forumOptions[$category->title][$forum->id] = $forum->title;
+            }
         }
         unset($category);
-
-        // Liste des forums pour le select
-        // TODO: tier par catégorie
-        $forums = Database::instance('forum')
-            ->orderBy('title', 'ASC')
-            ->findAll();
-        foreach ($forums as $forum) {
-            $this->forumOptions[$forum->id] = $forum->title;
-        }
 
         // Affichage
         $this->setView('forums');

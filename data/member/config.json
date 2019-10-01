@@ -2,8 +2,14 @@
     "columns": {
         "email": "string",
         "name": "string",
-        "password": "string"
+        "password": "string",
+        "groupId": "integer"
     },
-    "foreignKeys": {},
-    "increment": 2
+    "foreignKeys": {
+        "group": {
+            "column": "groupId",
+            "table": "group"
+        }
+    },
+    "increment": 4
 }

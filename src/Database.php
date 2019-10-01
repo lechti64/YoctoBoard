@@ -446,6 +446,12 @@ class Database implements \IteratorAggregate, \Countable
                     case 'NOT IN':
                         $isFound[$condition['logicalOperator']] = (in_array($row->{$condition['column']}, $condition['value']) === false);
                         break;
+                    case 'REVERSE IN':
+                        $isFound[$condition['logicalOperator']] = in_array($condition['value'], $row->{$condition['column']});
+                        break;
+                    case 'REVERSE NOT IN':
+                        $isFound[$condition['logicalOperator']] = (in_array($condition['value'], $row->{$condition['column']}) === false);
+                        break;
                     case 'LIKE':
                         $isFound[$condition['logicalOperator']] = preg_match(
                             '/^' . str_replace('%', '(.*?)', preg_quote($condition['value'])) . '$/i',
@@ -465,6 +471,7 @@ class Database implements \IteratorAggregate, \Countable
      * @param mixed $value Valeur
      * @param string $type Type
      * @return bool|float|int|string
+     * @throws \Exception
      */
     private function filter($value, $type)
     {
@@ -475,13 +482,23 @@ class Database implements \IteratorAggregate, \Countable
         // Filtre la valeur
         switch ($type) {
             case 'boolean':
-                return (bool)filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                return boolval($value);
+            case 'booleanArray':
+                return array_map('boolval', (array)$value);
             case 'float':
-                return (float)filter_var($value, FILTER_VALIDATE_FLOAT);
+                return floatval($value);
+            case 'floatArray':
+                return array_map('floatval', (array)$value);
             case 'integer':
-                return (int)filter_var($value, FILTER_VALIDATE_INT);
+                return intval($value);
+            case 'integerArray':
+                return array_map('intval', (array)$value);
+            case 'string':
+                return strval($value);
+            case 'stringArray':
+                return array_map('strval', (array)$value);
             default:
-                return (string)$value;
+                throw new \Exception('Unknown "' . $value . '" filter type');
         }
     }
 
@@ -497,6 +514,7 @@ class Database implements \IteratorAggregate, \Countable
         foreach ($foreignKeys as $foreignKey => $foreignInfo) {
             $foreignRowId = $row->{$foreignInfo['column']};
             $search = $foreignInfo['table'] . $foreignRowId;
+            // TODO: ne pas bloquer lorsque $foreignRowId === 0 afin de retourner un objet vide, exemple d'erreur : http://localhost/localhost/YoctoBoard/?application=forum&controller=65151
             if ($foreignRowId !== 0 && !in_array($search, $history)) {
                 // Configuration de la table rattachée à la clef étrangère
                 $configuration = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/config.json'), true);

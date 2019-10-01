@@ -21,6 +21,8 @@ class Autoloader
     {
         // Supprime le namespace
         $class = str_replace('Yocto\\', '', $class);
+        // Remplace les backslah par des slash
+        $class = str_replace('\\', '//', $class);
         // Importe le fichier de la classe
         if (is_file(ROOT . '/src/' . $class . '.php')) {
             require ROOT . '/src/' . $class . '.php';

@@ -2,8 +2,10 @@
     "columns": {
         "description": "string",
         "position": "integer",
+        "rightReadGroupIds": "integerArray",
+        "rightWriteGroupIds": "integerArray",
         "title": "string"
     },
     "foreignKeys": {},
-    "increment": 2
+    "increment": 5
 }

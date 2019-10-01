@@ -2,24 +2,65 @@
 
 namespace Yocto;
 
+use Yocto\Exception\ForbiddenException;
+
 class Session
 {
-
-    const VISIBILITY_INHERIT = 'inherit';
-    const VISIBILITY_PRIVATE = 'private';
-    const VISIBILITY_PUBLIC = 'public';
-    const VISIBILITY_PUBLIC_ONLY = 'public-only';
 
     /** @var Controller Contrôleur en provenance de ./src/Controller.php */
     private $controller;
 
+    /** @var Database Membre connecté */
+    private $member;
+
     /**
      * Constructeur de la classe
      * @param $controller
+     * @throws \Exception
      */
     public function __construct($controller)
     {
+        // Contrôleur
         $this->controller = $controller;
+        // Utilisateur connecté
+        $memberId = $this->controller->get('COOKIE:yocto_member_id');
+        $memberPassword = $this->controller->get('COOKIE:yocto_member_key');
+        $this->member = Database::instance('member')
+            ->where('id', '=', (int)$memberId)
+            ->andWhere('password', '=', $memberPassword)
+            ->find();
+    }
+
+
+    /**
+     * Vérifie l'accès du membre de la session en fonction d'une liste de groupes
+     * @param $groupIds array Liste de groupes
+     * @throws ForbiddenException
+     */
+    public function checkAccess($groupIds)
+    {
+        if (!in_array($this->member->groupId, $groupIds)) {
+            throw new ForbiddenException;
+        }
+    }
+
+    /**
+     * Crée les cookies d'une session pour un membre donnée
+     * @param $member Database Instance du membre
+     */
+    public function create($member)
+    {
+        setcookie('yocto_member_id', $member->id, time() + 3600 * 24);
+        setcookie('yocto_member_key', $member->password, time() + 3600 * 24);
+    }
+
+    /**
+     * Supprime les cookies de la session
+     */
+    public function delete()
+    {
+        setcookie('yocto_member_id', null, -1);
+        setcookie('yocto_member_key', null, -1);
     }
 
     /**
@@ -29,40 +70,8 @@ class Session
      */
     public function getMember()
     {
-        $memberId = $this->controller->get('COOKIE:yocto_member_id');
-        return Database::instance('member')
-            ->where('id', '=', (int)$memberId)
-            ->find();
+        return $this->member;
     }
 
-    /**
-     * Test si un objet est visible pour le membre
-     * @param \stdClass $object Objet
-     * @return bool
-     * @throws \Exception
-     */
-    public function isVisible($object)
-    {
-        if ($object->visibility === self::VISIBILITY_INHERIT) {
-            $pageRow = Database::instance('page')
-                ->where('id', '=', $object->pageId)
-                ->find();
-            $visibility = $pageRow->id
-                ? $pageRow->visibility
-                : self::VISIBILITY_PUBLIC;
-        } else {
-            $visibility = $object->visibility;
-        }
-        switch ($visibility) {
-            case self::VISIBILITY_PRIVATE:
-                return $this->isLoggedIn();
-            case self::VISIBILITY_PUBLIC:
-                return true;
-            case self::VISIBILITY_PUBLIC_ONLY:
-                return (!$this->isLoggedIn());
-            default:
-                throw new \Exception('"' . $visibility . '" visibility not found');
-        }
-    }
 
 }

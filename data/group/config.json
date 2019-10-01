@@ -1,0 +1,9 @@
+{
+    "columns": {
+        "administrator": "boolean",
+        "moderator": "boolean",
+        "name": "string"
+    },
+    "foreignKeys": {},
+    "increment": 4
+}

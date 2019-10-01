@@ -1,5 +1,16 @@
 {
     "description": "Description de la catégorie de test.",
     "position": 0,
+    "rightReadGroupIds": [
+        0,
+        1,
+        2,
+        3
+    ],
+    "rightWriteGroupIds": [
+        1,
+        2,
+        3
+    ],
     "title": "Catégorie de test"
 }
