@@ -2,6 +2,8 @@
 
 namespace Yocto;
 
+use Westsworld\TimeAgo;
+
 class ControllerForum extends Controller
 {
 
@@ -140,6 +142,14 @@ class ControllerForum extends Controller
             ->limit($offset, $topicsPerPage)
             ->findAll();
 
+        // Conversion de la date du dernier message en format lisible par l'homme
+        $timeAgoLang = new TimeAgo\Translations\Fr();
+        $timeAgo = new TimeAgo($timeAgoLang);
+        foreach ($this->topics as &$topic) {
+            $topic->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($topic->lastMessage->createdAt));
+        }
+        unset($topic);
+
         // Affichage
         $this->setView('forum');
         $this->setLayout('main');
@@ -156,15 +166,19 @@ class ControllerForum extends Controller
             $this->forumOptions[$category->title] = [];
         }
 
-        // Ajout des forums aux catégories
+        // Ajout des forums aux catégories et conversion de la date du dernier message en format lisible par l'homme
+        $timeAgoLang = new TimeAgo\Translations\Fr();
+        $timeAgo = new TimeAgo($timeAgoLang);
         foreach ($this->categories as &$category) {
             $category->forums = Database::instance('forum')
                 ->where('categoryId', '=', $category->id)
                 ->orderBy('position', 'ASC')
                 ->findAll();
-            foreach ($category->forums as $forum) {
+            foreach ($category->forums as &$forum) {
+                $forum->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($forum->lastMessage->createdAt));
                 $this->forumOptions[$category->title][$forum->id] = $forum->title;
             }
+            unset($forum);
         }
         unset($category);
 

@@ -79,7 +79,7 @@
                                     </p>
                                     <p class="card-text">
                                         <small class="text-muted">
-                                            <?php echo strftime('%e %B %G', (new DateTime($topic->lastMessage->createdAt))->getTimestamp()); ?>
+                                            <?php echo $topic->lastMessage->createdAt; ?>
                                         </small>
                                     </p>
                                 </div>

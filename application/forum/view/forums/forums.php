@@ -21,46 +21,50 @@
             <?php foreach ($category->forums as $forum): ?>
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-8 align-self-center">
+                        <div class="col-8 col-lg-9 align-self-lg-center">
                             <div class="d-flex">
-                                <div class="align-self-center pr-3">
+                                <div class="align-self-start align-self-lg-center pr-3">
                                     <div class="forum__status bg-warning rounded-circle text-center d-inline-block">
                                         <i class="fas fa-comments"></i>
                                     </div>
                                 </div>
-                                <div class="flex-grow-1 align-self-center">
-                                    <h5 class="card-title mb-0">
-                                        <a href="?application=forum&controller=<?php echo $forum->id; ?>">
-                                            <?php echo $forum->title; ?>
-                                        </a>
-                                    </h5>
-                                    <?php if ($forum->description): ?>
-                                        <p class="card-text"><?php echo $forum->description; ?></p>
-                                    <?php endif; ?>
+                                <div class="d-flex w-100 justify-content-between flex-column flex-lg-row">
+                                    <div class="flex-grow-1 align-self-lg-center">
+                                        <h5 class="card-title mb-0">
+                                            <a href="?application=forum&controller=<?php echo $forum->id; ?>">
+                                                <?php echo $forum->title; ?>
+                                            </a>
+                                        </h5>
+                                        <?php if ($forum->description): ?>
+                                            <p class="card-text">
+                                                <small><?php echo $forum->description; ?></small>
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="align-self-lg-center text-lg-center">
+                                        <h5 class="card-title d-inline d-lg-block mb-0 forum__messages-nb"><?php echo $forum->messagesNb; ?></h5>
+                                        <p class="card-text d-inline d-lg-block">
+                                            <small class="text-muted">
+                                                <?php echo $forum->messagesNb > 1 ? 'messages' : 'message'; ?>
+                                            </small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-1 align-self-center text-center">
-                            <h5 class="card-title mb-0"><?php echo $forum->messagesNb; ?></h5>
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    <?php echo $forum->messagesNb > 1 ? 'messages' : 'message'; ?>
-                                </small>
-                            </p>
-                        </div>
-                        <div class="col-3 align-self-center">
+                        <div class="col-4 col-lg-3 align-self-lg-center">
                             <?php if ($forum->lastMessageId): ?>
-                                <div class="d-flex">
-                                    <div class="forum__member-picture align-self-center rounded-circle bg-light text-center font-weight-bold text-uppercase">
+                                <div class="d-flex flex-column flex-lg-row justify-content-end justify-content-lg-start">
+                                    <div class="forum__member-picture align-self-end align-self-lg-center rounded-circle bg-light text-center font-weight-bold text-uppercase">
                                         <?php echo $forum->lastMessage->member->name[0]; ?>
                                     </div>
-                                    <div class="pl-3">
-                                        <p class="card-text mb-n1">
+                                    <div class="pl-lg-3 text-right text-lg-left">
+                                        <p class="card-text mb-n1 d-none d-lg-block">
                                             <a href="?application=topic&controller=<?php echo $forum->lastMessage->topicId; ?>">
                                                 <?php echo $forum->lastMessage->topic->title; ?>
                                             </a>
                                         </p>
-                                        <p class="card-text mb-n1">
+                                        <p class="card-text mb-n1 d-none d-lg-block">
                                             <small>
                                                 Par
                                                 <a href="?application=member&controller=<?php echo $forum->lastMessage->member->id; ?>">
@@ -70,7 +74,7 @@
                                         </p>
                                         <p class="card-text">
                                             <small class="text-muted">
-                                                <?php echo strftime('%e %B %G', (new DateTime($forum->lastMessage->createdAt))->getTimestamp()); ?>
+                                                <?php echo $forum->lastMessage->createdAt; ?>
                                             </small>
                                         </p>
                                     </div>

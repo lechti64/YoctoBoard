@@ -1,12 +1,30 @@
 .forum__status {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  color: #ffffff;
-  font-size: 18px;
+    color: #ffffff;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
 }
+
 .forum__member-picture {
-  height: 35px;
-  width: 35px;
-  line-height: 35px;
+    height: 35px;
+    width: 35px;
+    line-height: 35px;
+}
+
+.forum__messages-nb {
+    font-size: 80%;
+}
+
+@media screen and (min-width: 992px) {
+    .forum__status {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 18px;
+    }
+
+    .forum__messages-nb {
+        font-size: 1.15rem;
+    }
 }

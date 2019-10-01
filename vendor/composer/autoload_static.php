@@ -10,6 +10,7 @@ class ComposerStaticInit842e07383a98c5833254d4bf902b8899
         'W' => 
         array (
             'Whoops\\' => 7,
+            'Westsworld\\' => 11,
         ),
         'S' => 
         array (
@@ -25,6 +26,10 @@ class ComposerStaticInit842e07383a98c5833254d4bf902b8899
         'Whoops\\' => 
         array (
             0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
+        ),
+        'Westsworld\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/jimmiw/php-time-ago/src/Westsworld',
         ),
         'ScssPhp\\ScssPhp\\' => 
         array (
