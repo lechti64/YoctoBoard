@@ -21,16 +21,33 @@
 
 <?php foreach ($this->messages as $message): ?>
     <div id="messsage-<?php echo $message->id; ?>" class="card my-3">
+        <div class="card-header d-block d-md-none">
+            <div class="d-flex align-items-center">
+                <a href="?application=member&controller=<?php echo $message->memberId; ?>" class="mr-3">
+                    <?php echo Yocto\Helper::getMemberPicture($message->member, 40); ?>
+                </a>
+                <div>
+                    <h6 class="card-header-title mb-0">
+                        <a href="?application=member&controller=<?php echo $message->memberId; ?>">
+                            <?php echo $message->member->name; ?>
+                        </a>
+                    </h6>
+                    <p class="card-text">
+                        <small class="text-muted">Posté <?php echo $message->createdAt; ?></small>
+                    </p>
+                </div>
+            </div>
+        </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-2 text-center">
+                <div class="col-2 text-center d-none d-md-block">
                     <h5 class="card-title">
                         <a href="?application=member&controller=<?php echo $message->memberId; ?>">
                             <?php echo $message->member->name; ?>
                         </a>
                     </h5>
                     <a href="?application=member&controller=<?php echo $message->memberId; ?>">
-                        <?php echo Yocto\Helper::getMemberPicture($message->member, 100); ?>
+                        <?php echo Yocto\Helper::getMemberPicture($message->member, 90); ?>
                     </a>
                     <p class="card-text mb-0 mt-2">
                         <small><?php echo $message->member->group->name; ?></small>
@@ -42,11 +59,11 @@
                         </small>
                     </p>
                 </div>
-                <div class="col-10">
-                    <p class="card-text">
+                <div class="col-12 col-md-10">
+                    <p class="card-text d-none d-md-block">
                         <small class="text-muted">Posté <?php echo $message->createdAt; ?></small>
                     </p>
-                    <p class="card-text"><?php echo $message->content; ?>
+                    <div class="card-text"><?php echo $message->content; ?></div>
                     <hr>
                     <?php if (
                         $this->getSession()->getMember()->id === $message->memberId
