@@ -3,9 +3,9 @@
     "lastMessageId": 2,
     "memberId": 1,
     "messagesNb": 1,
-    "pin": false,
-    "title": "Test",
-    "viewsNb": 0,
-    "createdAt": "2019-09-09T18:57:55+0000",
-    "updatedAt": "2019-09-09T18:57:55+0000"
+    "pin": true,
+    "title": "Sujet \u00e9pingl\u00e9",
+    "viewsNb": 3,
+    "createdAt": "2019-10-01T23:21:11+0000",
+    "updatedAt": "2019-10-01T23:22:49+0000"
 }

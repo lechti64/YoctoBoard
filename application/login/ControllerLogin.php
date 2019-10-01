@@ -27,7 +27,7 @@ class ControllerLogin extends Controller
         // Connexion réussie
         if (
             $member->id
-            AND password_verify($password, $member->password)
+            && password_verify($password, $member->password)
         ) {
             // Création de la session
             $this->getSession()->create($member);

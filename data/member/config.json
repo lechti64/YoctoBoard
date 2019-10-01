@@ -1,9 +1,10 @@
 {
     "columns": {
         "email": "string",
+        "groupId": "integer",
         "name": "string",
-        "password": "string",
-        "groupId": "integer"
+        "messagesNb": "integer",
+        "password": "string"
     },
     "foreignKeys": {
         "group": {
@@ -11,5 +12,5 @@
             "table": "group"
         }
     },
-    "increment": 4
+    "increment": 2
 }

@@ -33,13 +33,18 @@ class ControllerTopic extends Controller
 
     public function topic($topicId)
     {
-        // Forum
+        // Sujet
         $this->topic = Database::instance('topic')
             ->where('id', '=', (int)$topicId)
             ->find();
 
         // Accès
         $this->getSession()->checkAccess($this->topic->forum->category->rightReadGroupIds);
+
+        // Incrémente le nombre de messages du sujet
+        $this->topic->viewsNb++;
+        $this->topic->prepare();
+        Database::save($this->topic);
 
         // Nombre de messages par page
         $messagesPerPage = 20;
@@ -57,7 +62,8 @@ class ControllerTopic extends Controller
         $this->pagesNb = (int)ceil($messagesNb / $messagesPerPage);
 
         // Page courante, précédente et suivante
-        $this->pageCurrent = min($this->pagesNb, max(1, (int)$this->get('page')));
+        $this->pageCurrent = $this->get('page') === 'last' ? $this->pagesNb : (int)$this->get('page');
+        $this->pageCurrent = min($this->pagesNb, max(1, $this->pageCurrent));
         $this->pagePrevious = $this->pageCurrent - 1;
         $this->pageNext = $this->pageCurrent + 1;
         $this->pageFirstLink = max(1, $this->pageCurrent - $pageLinksNb);
@@ -69,7 +75,7 @@ class ControllerTopic extends Controller
         // Messages à afficher
         $this->messages = Database::instance('message')
             ->where('topicId', '=', (int)$topicId)
-            ->orderBy('createdAt', 'DESC')
+            ->orderBy('createdAt', 'ASC')
             ->limit($offset, $messagesPerPage)
             ->findAll();
 
@@ -82,9 +88,62 @@ class ControllerTopic extends Controller
         }
         unset($message);
 
+        // Librairies
+        $this->setVendor(
+            'https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.0.15/tinymce.min.js',
+            'sha256-sUcUXrcbjQo1TED1nZIj4IndwPGhvnuuhhlRi94D7A8='
+        );
+
         // Affichage
         $this->setView('topic');
         $this->setLayout('main');
+    }
+
+    public function topicPost($topicId)
+    {
+        // Sujet
+        $topic = Database::instance('topic')
+            ->where('id', '=', (int)$topicId)
+            ->find();
+
+        // Accès
+        $this->getSession()->checkAccess($topic->forum->category->rightWriteGroupIds);
+
+        // Données du formulaire
+        $content = $this->get('content', true);
+
+        // Création du message
+        $message = Database::instance('message');
+        $message->content = $content;
+        $message->memberId = $this->getSession()->getMember()->id;
+        $message->topicId = $topicId;
+        $message->prepare();
+
+        // Incrémente le nombre de messages du membre
+        $member = $this->getSession()->getMember();
+        $member->messagesNb++;
+        $member->prepare();
+
+        // Incrémente le nombre de messages et ajoute l'id du message au sujet
+        $topic->messagesNb++;
+        $topic->lastMessageId = $message->id;
+        $topic->prepare();
+
+        // Incrémente le nombre de messages et ajoute l'id du message au forum
+        $forum = Database::instance('forum')
+            ->where('id', '=', $topic->forumId)
+            ->find();
+        $forum->lastMessageId = $message->id;
+        $forum->messagesNb++;
+        $forum->prepare();
+
+        // Redirection si aucune erreur
+        if (Database::save($message, $member, $topic, $forum)) {
+            $this->redirect('./?application=topic&controller=' . $topicId . '&page=last#messsage-' . $message->id);
+        }
+
+        // Affichage
+        $this->topic($topicId);
     }
 
 }

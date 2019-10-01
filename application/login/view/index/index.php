@@ -5,11 +5,11 @@
                 <div class="card-body">
                     <h1>Connexion</h1>
                     <div class="form-group">
-                        <?php echo $this->getForm()->label('auth', 'Pseudo ou adresse email (tmp: Administrateur, Modérateur, Membre)'); ?>
+                        <?php echo $this->getForm()->label('auth', 'Pseudo ou adresse email (test: Rémi)'); ?>
                         <?php echo $this->getForm()->input('auth'); ?>
                     </div>
                     <div class="form-group">
-                        <?php echo $this->getForm()->label('password', 'Mot de passe (tmp: password)'); ?>
+                        <?php echo $this->getForm()->label('password', 'Mot de passe (test: password)'); ?>
                         <?php echo $this->getForm()->input('password', [
                             'type' => 'password',
                         ]); ?>

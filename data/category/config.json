@@ -7,5 +7,5 @@
         "title": "string"
     },
     "foreignKeys": {},
-    "increment": 5
+    "increment": 2
 }

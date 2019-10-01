@@ -22,7 +22,7 @@
     <?php $this->loadViewCss(); ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <a class="navbar-brand" href="?application=forum"><?php echo $this->_configuration->title; ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavContent"

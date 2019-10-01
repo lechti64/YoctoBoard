@@ -1,9 +1,9 @@
 {
     "categoryId": 1,
     "description": "Description du forum de test.",
-    "lastMessageId": 76,
-    "messagesNb": 74,
+    "lastMessageId": 3,
+    "messagesNb": 3,
     "position": 0,
     "title": "Forum de test",
-    "updatedAt": "2019-10-01T14:12:04+0000"
+    "updatedAt": "2019-10-01T23:21:23+0000"
 }

@@ -1,2 +1,3 @@
 .idea/
-/public/main.css
+public/main.css
+vendor/bin/

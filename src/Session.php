@@ -35,6 +35,7 @@ class Session
     /**
      * Vérifie l'accès du membre de la session en fonction d'une liste de groupes
      * @param array $groupIds Liste de groupes
+     * @return bool
      * @throws ForbiddenException
      */
     public function checkAccess($groupIds)
@@ -42,6 +43,7 @@ class Session
         if (!in_array($this->member->groupId, $groupIds)) {
             throw new ForbiddenException;
         }
+        return true;
     }
 
     /**

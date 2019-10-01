@@ -1,7 +1,7 @@
 {
-    "content": "<p>Test<\/p>",
+    "content": "<p>Test.<\/p>",
     "memberId": 1,
     "topicId": 2,
-    "createdAt": "2019-09-09T18:57:55+0000",
-    "updatedAt": "2019-09-09T18:57:55+0000"
+    "createdAt": "2019-10-01T23:21:11+0000",
+    "updatedAt": "2019-10-01T23:21:11+0000"
 }

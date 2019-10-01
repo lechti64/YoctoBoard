@@ -82,7 +82,7 @@ class Database implements \IteratorAggregate, \Countable
     public static function create($table, array $columns = [])
     {
         // Crée la table
-        if (self::exists($table) === false AND mkdir(self::PATH . '/' . $table) === false) {
+        if (self::exists($table) === false && mkdir(self::PATH . '/' . $table) === false) {
             throw new \Exception('Failed to save "' . $table . '" table');
         }
         // Crée le fichier de configuration
@@ -106,7 +106,7 @@ class Database implements \IteratorAggregate, \Countable
         if ($this->row->id) {
             if (
                 is_file(self::PATH . '/' . $this->table . '/' . $this->row->id . '.json')
-                AND unlink(self::PATH . '/' . $this->table . '/' . $this->row->id . '.json') === false
+                && unlink(self::PATH . '/' . $this->table . '/' . $this->row->id . '.json') === false
             ) {
                 throw new \Exception('Failed to delete "' . $this->row->id . '" row');
             }
@@ -115,7 +115,7 @@ class Database implements \IteratorAggregate, \Countable
             foreach ($this->rows as $row) {
                 if (
                     is_file(self::PATH . '/' . $this->table . '/' . $row->id . '.json')
-                    AND unlink(self::PATH . '/' . $this->table . '/' . $row->id . '.json') === false
+                    && unlink(self::PATH . '/' . $this->table . '/' . $row->id . '.json') === false
                 ) {
                     throw new \Exception('Failed to delete "' . $row->id . '" row');
                 }
@@ -196,11 +196,17 @@ class Database implements \IteratorAggregate, \Countable
         $self->row = new \stdClass();
         $self->row->id = 0;
         foreach ($self->configuration['columns'] as $column => $type) {
-            $self->row->{$column} = $self->filter('', $self->configuration['columns'][$column]);
+            $self->row->{$column} = $self->filter('', $type);
         }
+        // Clefs étrangères vides
+        $self->row = (object)array_merge((array)$self->row, (array)self::instanceForeign(
+            $self->row,
+            $self->configuration['foreignKeys'],
+            [$table . $self->row->id]
+        ));;
         // Lignes de la table
         foreach (new \DirectoryIterator(self::PATH . '/' . $table) as $file) {
-            if ($file->getExtension() === 'json' AND $file->getFilename() !== 'config.json') {
+            if ($file->getExtension() === 'json' && $file->getFilename() !== 'config.json') {
                 $row = json_decode(file_get_contents(self::PATH . '/' . $table . '/' . $file->getFilename()));
                 $row->id = (int)$file->getBasename('.json');
                 $self->rows[] = (object)array_merge((array)$row, (array)self::instanceForeign(
@@ -210,6 +216,7 @@ class Database implements \IteratorAggregate, \Countable
                 ));;
             }
         }
+        // Ajout des clefs étrangères
         return $self;
     }
 
@@ -258,62 +265,60 @@ class Database implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Enregistre une ligne
+     * Prépare une ligne
      * @return $this
      * @throws \Exception
      */
-    public function save()
+    public function prepare()
     {
-        // Échec d'enregistrement si un valeur est égale à null, car null signifie qu'un champ obligatoire est vide
-        if (in_array(null, (array)$this->row, true)) {
-            return $this;
-        }
-        // Supprime les clefs étrangères pour ne pas les enregistrer
-        foreach ($this->configuration['foreignKeys'] as $foreignKey => $foreignInfo) {
-            unset($this->row->{$foreignKey});
-        }
-        // Date de création / mise à jour
-        $date = new \DateTime('now', new \DateTimeZone('UTC'));
-        $date = $date->format('Y-m-d\TH:i:sO');
-        // Insertion
-        if ($this->row->id === 0) {
-            // Ajoute un id lors d'une insertion
-            $this->row->id = $this->configuration['increment']++;
-            // Ajoute la date de création
-            $this->row->createdAt = $date;
-        }
-        // Ajout de la date de mise à jour
-        $this->row->updatedAt = $date;
-        // Incrémente le fichier de configuration
-        if (file_put_contents(self::PATH . '/' . $this->table . '/config.json', json_encode($this->configuration, JSON_PRETTY_PRINT)) === false) {
-            throw new \Exception('Failed to edit "config.json" for "' . $this->table . '" table');
-        }
-        // Enregistre la ligne
-        $row = clone $this->row;
-        unset($row->id);
-        if (file_put_contents(self::PATH . '/' . $this->table . '/' . $this->row->id . '.json', json_encode($row, JSON_PRETTY_PRINT)) === false) {
-            throw new \Exception('Failed to insert "' . $this->row->id . '" row for "' . $this->table . '" table');
+        // Bloque la préparation si la valeur d'une ligne est égale à null
+        if (!in_array(null, (array)$this->row, true)) {
+            // Date de création / mise à jour
+            $date = new \DateTime('now', new \DateTimeZone('UTC'));
+            $date = $date->format('Y-m-d\TH:i:sO');
+            // Insertion
+            if ($this->row->id === 0) {
+                // Ajoute un id lors d'une insertion
+                $this->row->id = $this->configuration['increment']++;
+                // Ajoute la date de création
+                $this->row->createdAt = $date;
+            }
+            // Ajout de la date de mise à jour
+            $this->row->updatedAt = $date;
         }
         return $this;
     }
 
     /**
-     * Enregistre les instances demandées
-     * @param Database[] $instances Instances à enregistrer
+     * Enregistre une ou plusieurs lignes
+     * @param Database[] ...$instances
      * @return bool
      * @throws \Exception
      */
-    public static function saveAll(array $instances = [])
+    public static function save(...$instances)
     {
         // Bloque l'enregistrement si l'une des instances contient une ligne dont la valeur est égale à null
         foreach ($instances as $instance) {
-            if (in_array(null, (array)$instance->row)) {
+            if (in_array(null, (array)$instance->row, true)) {
                 return false;
             }
         }
-        // Enregistre les instances
+        // Enregistre les lignes
         foreach ($instances as $instance) {
-            $instance->save();
+            // Incrémente le fichier de configuration
+            if (file_put_contents(self::PATH . '/' . $instance->table . '/config.json', json_encode($instance->configuration, JSON_PRETTY_PRINT)) === false) {
+                throw new \Exception('Failed to edit "config.json" for "' . $instance->table . '" table');
+            }
+            // Crée une copie sans les clefs étrangères, l'id et la présence d'erreur afin de ne pas les enregistrer
+            $rowClone = clone $instance->row;
+            foreach ($instance->configuration['foreignKeys'] as $foreignKey => $foreignInfo) {
+                unset($rowClone->{$foreignKey});
+            }
+            unset($rowClone->id);
+            // Enregistre la ligne
+            if (file_put_contents(self::PATH . '/' . $instance->table . '/' . $instance->row->id . '.json', json_encode($rowClone, JSON_PRETTY_PRINT)) === false) {
+                throw new \Exception('Failed to insert "' . $instance->row->id . '" row for "' . $instance->table . '" table');
+            }
         }
         return true;
     }
@@ -426,7 +431,7 @@ class Database implements \IteratorAggregate, \Countable
                     break;
                 }
                 // Ignore les conditions AND lorsqu'une condition AND = false
-                if ($condition['logicalOperator'] === 'AND' AND $isFound['AND'] === false) {
+                if ($condition['logicalOperator'] === 'AND' && $isFound['AND'] === false) {
                     continue;
                 }
                 // Check le contenu des colonnes
@@ -471,7 +476,7 @@ class Database implements \IteratorAggregate, \Countable
                         throw new \Exception('Unknown "' . $condition['logicalOperator'] . '" logical operator');
                 }
             }
-            return ($isFound['OR'] OR $isFound['AND']);
+            return ($isFound['OR'] || $isFound['AND']);
         });
     }
 
@@ -482,7 +487,7 @@ class Database implements \IteratorAggregate, \Countable
      * @return bool|float|int|string
      * @throws \Exception
      */
-    private function filter($value, $type)
+    private static function filter($value, $type)
     {
         // Pas de filtre pour une valeur null, car null signifie qu'un champ obligatoire est vide
         if ($value === null) {
@@ -517,21 +522,30 @@ class Database implements \IteratorAggregate, \Countable
      * @param array $foreignKeys Clefs étrangères
      * @param array $history Historique des recherches pour éviter les boucles infinies
      * @return \stdClass
+     * @throws \Exception
      */
     private static function instanceForeign($row, $foreignKeys, $history)
     {
         foreach ($foreignKeys as $foreignKey => $foreignInfo) {
             $foreignRowId = $row->{$foreignInfo['column']};
             $search = $foreignInfo['table'] . $foreignRowId;
-            // TODO: ne pas bloquer lorsque $foreignRowId === 0 afin de retourner un objet vide, exemple d'erreur : http://localhost/localhost/YoctoBoard/?application=forum&controller=65151
-            if ($foreignRowId !== 0 && !in_array($search, $history)) {
+            if (!in_array($search, $history)) {
                 // Configuration de la table rattachée à la clef étrangère
                 $configuration = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/config.json'), true);
-                // Lignes rattachées à la clef étrangère
-                $foreignRow = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/' . $foreignRowId . '.json'));
-                $foreignRow->id = $foreignRowId;
-                $history[] = $search;
+                // Ligne rattachée à la clef étrangère
+                if ($foreignRowId) {
+                    $foreignRow = json_decode(file_get_contents(self::PATH . '/' . $foreignInfo['table'] . '/' . $foreignRowId . '.json'));
+                    $foreignRow->id = $foreignRowId;
+                } // Ligne vide si aucune clef rattachée
+                else {
+                    $foreignRow = new \stdClass();
+                    $foreignRow->id = 0;
+                    foreach ($configuration['columns'] as $column => $type) {
+                        $foreignRow->{$column} = self::filter('', $type);
+                    }
+                }
                 // Récursivité
+                $history[] = $search;
                 $row->{$foreignKey} = (object)array_merge((array)$foreignRow, (array)self::instanceForeign(
                     $foreignRow,
                     $configuration['foreignKeys'],

@@ -1,4 +1,3 @@
-$('#addTopicSubmit').on('click', function() {
-  window.location =
-    '?application=forum&controller=' + $('#addTopicForum').val() + '/add'
-})
+$('#addTopicSubmit').on('click', function () {
+    window.location = '?application=forum&controller=' + $('#addTopicForum').val() + '/add'
+});

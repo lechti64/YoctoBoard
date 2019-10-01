@@ -90,17 +90,13 @@ class Controller
     }
 
     /**
-     * Accès à une ou aux notices
-     * @param null $key Clé à rechercher
-     * @return array|string
+     * Accès à une notice
+     * @param string $key Clé à rechercher
+     * @return string
      */
-    public function getNotices($key = null)
+    public function getNotices($key)
     {
-        if ($key) {
-            return isset($this->notices[$key]) ? $this->notices[$key] : '';
-        } else {
-            return $this->notices;
-        }
+        return isset($this->notices[$key]) ? $this->notices[$key] : '';
     }
 
     /**

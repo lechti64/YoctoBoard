@@ -34,7 +34,7 @@
                                                title="Sujet épinglé"></small>
                                     <?php endif; ?>
                                     <h5 class="card-title mb-n1 d-inline-block">
-                                        <a href="?application=topic&controller=<?php echo $topic->id; ?>/">
+                                        <a href="?application=topic&controller=<?php echo $topic->id; ?>">
                                             <?php echo $topic->title; ?>
                                         </a>
                                     </h5>

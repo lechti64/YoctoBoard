@@ -57,6 +57,14 @@ class ControllerForum extends Controller
 
     public function addPost($forumId)
     {
+        // Forum
+        $forum = Database::instance('forum')
+            ->where('id', '=', (int)$forumId)
+            ->find();
+
+        // Accès
+        $this->getSession()->checkAccess($forum->category->rightWriteGroupIds);
+
         // Données du formulaire
         $content = $this->get('content', true);
         $pin = $this->get('pin');
@@ -69,30 +77,33 @@ class ControllerForum extends Controller
         $topic->messagesNb = 1;
         $topic->pin = $pin;
         $topic->title = $title;
-        $topic->save();
+        $topic->prepare();
 
         // Création du message
         $message = Database::instance('message');
         $message->content = $content;
         $message->memberId = $this->getSession()->getMember()->id;
         $message->topicId = $topic->id;
-        $message->save();
+        $message->prepare();
+
+        // Incrémente le nombre de messages du membre
+        $member = $this->getSession()->getMember();
+        $member->messagesNb++;
+        $member->prepare();
 
         // Ajout de l'id du message au sujet
         $topic->lastMessageId = $message->id;
-        $topic->save();
+        $topic->prepare();
 
-        // Ajout de l'id du message au forum
-        $forum = Database::instance('forum')
-            ->where('id', '=', (int)$forumId)
-            ->find();
+        // Incrémente le nombre de messages et ajoute l'id du message au forum
         $forum->lastMessageId = $message->id;
         $forum->messagesNb++;
-        $forum->save();
+        $forum->prepare();
 
-        // Redirection si aucune erreur
-        if (!$this->getNotices()) {
-            $this->redirect('./?application=topic&controller=' . $message->id);
+        // Enregistrement
+        if (Database::save($topic, $message, $member, $forum)) {
+            // Redirection
+            $this->redirect('./?application=topic&controller=' . $topic->id);
         }
 
         // Affichage
