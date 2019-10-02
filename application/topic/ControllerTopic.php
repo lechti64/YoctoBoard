@@ -41,11 +41,6 @@ class ControllerTopic extends Controller
         // Accès
         $this->getSession()->checkAccess($this->topic->forum->category->rightReadGroupIds);
 
-        // Incrémente le nombre de messages du sujet
-        $this->topic->viewsNb++;
-        $this->topic->prepare();
-        Database::save($this->topic);
-
         // Nombre de messages par page
         $messagesPerPage = 20;
 
@@ -87,6 +82,25 @@ class ControllerTopic extends Controller
             $message->updatedAt = $timeAgo->inWords(new \DateTime($message->updatedAt));
         }
         unset($message);
+
+        // Incrémente le nombre de messages du sujet
+        $this->topic->viewsNb++;
+        $this->topic->prepare();
+
+        // Marque le topic comme lus
+        if ($this->pageCurrent === $this->pagesNb) {
+            $topicRead = Database::instance('topic-read')
+                ->where('memberId', '=', $this->getSession()->getMember()->id)
+                ->andWhere('topicId', '=', (int)$topicId)
+                ->find();
+            $topicRead->memberId = $this->getSession()->getMember()->id;
+            $topicRead->topicId = $topicId;
+            $topicRead->forumId = $this->topic->forumId;
+            $topicRead->prepare();
+        }
+
+        // Enregistrement
+        Database::save($this->topic, $topicRead);
 
         // Librairies
         $this->setVendor(

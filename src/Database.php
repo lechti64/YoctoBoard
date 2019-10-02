@@ -195,6 +195,10 @@ class Database implements \IteratorAggregate, \Countable
         // Ligne vide
         $self->row = new \stdClass();
         $self->row->id = 0;
+        $date = new \DateTime('now', new \DateTimeZone('UTC'));
+        $date = $date->format('Y-m-d\TH:i:sO');
+        $self->row->createdAt = $date;
+        $self->row->updatedAt = $date;
         foreach ($self->configuration['columns'] as $column => $type) {
             $self->row->{$column} = $self->filter('', $type);
         }
@@ -209,6 +213,8 @@ class Database implements \IteratorAggregate, \Countable
             if ($file->getExtension() === 'json' && $file->getFilename() !== 'config.json') {
                 $row = json_decode(file_get_contents(self::PATH . '/' . $table . '/' . $file->getFilename()));
                 $row->id = (int)$file->getBasename('.json');
+                $row->createdAt = $date;
+                $row->updatedAt = $date;
                 $self->rows[] = (object)array_merge((array)$row, (array)self::instanceForeign(
                     $row,
                     $self->configuration['foreignKeys'],
@@ -273,17 +279,14 @@ class Database implements \IteratorAggregate, \Countable
     {
         // Bloque la préparation si la valeur d'une ligne est égale à null
         if (!in_array(null, (array)$this->row, true)) {
-            // Date de création / mise à jour
-            $date = new \DateTime('now', new \DateTimeZone('UTC'));
-            $date = $date->format('Y-m-d\TH:i:sO');
             // Insertion
             if ($this->row->id === 0) {
                 // Ajoute un id lors d'une insertion
                 $this->row->id = $this->configuration['increment']++;
-                // Ajoute la date de création
-                $this->row->createdAt = $date;
             }
-            // Ajout de la date de mise à jour
+            // Mise à jour de la date de mise à jour
+            $date = new \DateTime('now', new \DateTimeZone('UTC'));
+            $date = $date->format('Y-m-d\TH:i:sO');
             $this->row->updatedAt = $date;
         }
         return $this;
@@ -540,6 +543,10 @@ class Database implements \IteratorAggregate, \Countable
                 else {
                     $foreignRow = new \stdClass();
                     $foreignRow->id = 0;
+                    $date = new \DateTime('now', new \DateTimeZone('UTC'));
+                    $date = $date->format('Y-m-d\TH:i:sO');
+                    $foreignRow->createdAt = $date;
+                    $foreignRow->updatedAt = $date;
                     foreach ($configuration['columns'] as $column => $type) {
                         $foreignRow->{$column} = self::filter('', $type);
                     }

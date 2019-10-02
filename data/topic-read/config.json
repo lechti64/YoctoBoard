@@ -1,0 +1,9 @@
+{
+    "columns": {
+        "memberId": "integer",
+        "topicId": "integer",
+        "forumId": "integer"
+    },
+    "foreignKeys": [],
+    "increment": 2
+}

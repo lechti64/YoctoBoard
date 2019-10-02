@@ -5,7 +5,8 @@
         "lastMessageId": "integer",
         "messagesNb": "integer",
         "position": "integer",
-        "title": "string"
+        "title": "string",
+        "topicsNb": "integer"
     },
     "foreignKeys": {
         "category": {

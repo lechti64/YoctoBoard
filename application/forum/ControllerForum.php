@@ -95,9 +95,10 @@ class ControllerForum extends Controller
         $topic->lastMessageId = $message->id;
         $topic->prepare();
 
-        // Incrémente le nombre de messages et ajoute l'id du message au forum
+        // Incrémente le nombre de messages / sujets et ajoute l'id du message au forum
         $forum->lastMessageId = $message->id;
         $forum->messagesNb++;
+        $forum->topicsNb++;
         $forum->prepare();
 
         // Enregistrement
@@ -153,10 +154,17 @@ class ControllerForum extends Controller
             ->limit($offset, $topicsPerPage)
             ->findAll();
 
-        // Conversion des dates en format lisible par l'homme
         $timeAgoLang = new TimeAgo\Translations\Fr();
         $timeAgo = new TimeAgo($timeAgoLang);
         foreach ($this->topics as &$topic) {
+            // Sujet lu ou non, date de lecture du sujet => à la date de création du dernier message posté
+            $topicRead = Database::instance('topic-read')
+                ->where('memberId', '=', $this->getSession()->getMember()->id)
+                ->andWhere('topicId', '=', $topic->id)
+                ->orderBy('updatedAt', 'ASC')
+                ->find();
+            $topic->read = ($topicRead->id && $topicRead->updatedAt >= $topic->lastMessage->createdAt);
+            // Conversion des dates en format lisible par l'homme
             $topic->createdAt = $timeAgo->inWords(new \DateTime($topic->createdAt));
             $topic->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($topic->lastMessage->createdAt));
         }
@@ -178,17 +186,31 @@ class ControllerForum extends Controller
             $this->forumOptions[$category->title] = [];
         }
 
-        // Ajout des forums aux catégories et conversion de la date du dernier message en format lisible par l'homme
         $timeAgoLang = new TimeAgo\Translations\Fr();
         $timeAgo = new TimeAgo($timeAgoLang);
         foreach ($this->categories as &$category) {
+            // Ajout des forums aux catégories
             $category->forums = Database::instance('forum')
                 ->where('categoryId', '=', $category->id)
                 ->orderBy('position', 'ASC')
                 ->findAll();
             foreach ($category->forums as &$forum) {
-                $forum->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($forum->lastMessage->createdAt));
                 $this->forumOptions[$category->title][$forum->id] = $forum->title;
+                // Forum lu ou non, nombre de sujets lu = nombre de sujet s+ date de lecture du dernier sujet => à la date de création du dernier message posté
+                $topicsRead = Database::instance('topic-read')
+                    ->where('memberId', '=', $this->getSession()->getMember()->id)
+                    ->andWhere('forumId', '=', $forum->id)
+                    ->orderBy('updatedAt', 'ASC')
+                    ->findAll();
+                $topicsReadNb = $topicsRead->count();
+                $topicRead = $topicsRead->find();
+                $forum->read = (
+                    $topicsReadNb === $forum->topicsNb
+                    && $topicRead->id
+                    && $topicRead->updatedAt >= $forum->lastMessage->createdAt
+                );
+                // Conversion de la date du dernier message en format lisible par l'homme
+                $forum->lastMessage->createdAt = $timeAgo->inWords(new \DateTime($forum->lastMessage->createdAt));
             }
             unset($forum);
         }

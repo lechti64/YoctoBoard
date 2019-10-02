@@ -24,9 +24,15 @@
                         <div class="col-8 col-lg-9 align-self-lg-center">
                             <div class="d-flex">
                                 <div class="align-self-start align-self-lg-center pr-3">
-                                    <div class="forum__status text-white bg-warning rounded-circle text-center d-inline-block">
-                                        <i class="fas fa-comments"></i>
-                                    </div>
+                                    <?php if ($forum->read): ?>
+                                        <div class="forum__status bg-light rounded-circle text-center d-inline-block">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="forum__status text-white bg-warning rounded-circle text-center d-inline-block">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="d-flex w-100 justify-content-between flex-column flex-lg-row">
                                     <div class="flex-grow-1 align-self-lg-center">
@@ -56,11 +62,13 @@
                             <?php if ($forum->lastMessageId): ?>
                                 <div class="d-flex flex-column flex-lg-row justify-content-end justify-content-lg-start">
                                     <div class="align-self-end align-self-lg-center">
-                                        <?php echo Yocto\Helper::getMemberPicture($forum->lastMessage->member); ?>
+                                        <a href="?application=member&controller=<?php echo $forum->lastMessage->memberId; ?>">
+                                            <?php echo Yocto\Helper::getMemberPicture($forum->lastMessage->member); ?>
+                                        </a>
                                     </div>
                                     <div class="pl-lg-3 text-right text-lg-left">
                                         <p class="card-text mb-n1 d-none d-lg-block">
-                                            <a href="?application=topic&controller=<?php echo $forum->lastMessage->topicId; ?>">
+                                            <a href="?application=topic&controller=<?php echo $forum->lastMessage->topicId; ?>&page=last">
                                                 <?php echo $forum->lastMessage->topic->title; ?>
                                             </a>
                                         </p>

@@ -14,7 +14,7 @@ class Helper
      */
     public static function getMemberPicture($member, $size = 36)
     {
-        $avatar = new LetterAvatar($member->name, 'square', $size);
+        $avatar = new LetterAvatar(strtolower($member->name), 'square', $size);
         return '<img src="' . $avatar . '" class="rounded-circle" alt="' . $member->name . '">';
     }
 
